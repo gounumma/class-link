@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+
+* { border-color: #e5eaf2; }
+html { scroll-behavior: smooth; }
+body { @apply bg-white text-slate-800 antialiased; }
+::selection { background: #cfe5ff; color: #102044; }
+
+@layer base {
+  h1, h2, h3, h4 { @apply tracking-[-0.025em] text-navy-950; }
+  input, textarea, select { @apply outline-none; }
+}
+
+@layer components {
+  .container-page { @apply mx-auto w-full max-w-7xl px-5 sm:px-8; }
+  .focus-ring { @apply focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2; }
+  .subtle-grid {
+    background-image: linear-gradient(to right, rgba(16,32,68,.045) 1px, transparent 1px), linear-gradient(to bottom, rgba(16,32,68,.045) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+}

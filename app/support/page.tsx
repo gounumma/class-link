@@ -1,0 +1,6 @@
+import { Mail, MessageCircle, Phone } from "lucide-react";
+import { LinkButton } from "@/components/ui/link-button";
+
+export default function SupportPage() {
+  return <div className="bg-slate-50/70 py-20"><div className="container-page max-w-4xl"><div className="text-center"><p className="text-sm font-bold text-blue-600">HELP CENTER</p><h1 className="mt-3 text-4xl font-black">무엇을 도와드릴까요?</h1><p className="mt-4 text-slate-500">서비스 이용, 수업 상담, 튜터 지원 관련 문의를 남겨 주세요.</p></div><div className="mt-10 grid gap-5 md:grid-cols-3">{[{ icon: MessageCircle, title: "1:1 문의", text: "로그인 후 관리자와 안전하게 상담하세요." }, { icon: Phone, title: "전화", text: "010.5893.3907\n평일 10:00–18:00" }, { icon: Mail, title: "이메일", text: "gounumma@naver.com" }].map(({ icon: Icon, title, text }) => <div key={title} className="rounded-2xl border bg-white p-6 text-center shadow-soft"><div className="mx-auto grid size-11 place-items-center rounded-xl bg-blue-50 text-blue-700"><Icon className="size-5" /></div><h2 className="mt-4 font-extrabold">{title}</h2><p className="mt-2 whitespace-pre-line text-sm leading-6 text-slate-500">{text}</p></div>)}</div><div className="mt-8 text-center"><LinkButton href="/messages">문의 메시지 보기</LinkButton></div></div></div>;
+}

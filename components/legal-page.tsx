@@ -1,0 +1,5 @@
+import Link from "next/link";
+
+export function LegalPage({ title, version = "2026-06-24", children }: { title: string; version?: string; children: React.ReactNode }) {
+  return <div className="bg-slate-50/70 py-14 sm:py-20"><div className="container-page grid max-w-5xl gap-8 lg:grid-cols-[200px_1fr]"><aside><p className="text-xs font-bold uppercase tracking-widest text-blue-600">LEGAL</p><nav className="mt-5 grid gap-3 text-sm text-slate-500"><Link href="/legal/terms">이용약관</Link><Link href="/legal/privacy">개인정보처리방침</Link><Link href="/legal/tutor-verification">튜터 검증 안내</Link></nav></aside><article className="rounded-2xl border bg-white p-6 shadow-soft sm:p-10"><h1 className="text-3xl font-black sm:text-4xl">{title}</h1><p className="mt-3 text-sm text-slate-400">시행일 및 버전: {version}</p><div className="prose prose-slate mt-10 max-w-none prose-headings:text-navy-950 prose-headings:font-extrabold prose-p:leading-7 prose-li:leading-7">{children}</div><div className="mt-10 rounded-xl bg-amber-50 p-4 text-sm leading-6 text-amber-800">본 문서는 서비스 준비를 위한 초안입니다. 실제 운영 전 변호사 또는 개인정보보호 전문가의 검토를 받고, 대괄호로 표시된 사업자 정보를 확정해 주세요.</div></article></div></div>;
+}
