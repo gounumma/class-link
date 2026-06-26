@@ -1,8 +1,5 @@
-import type { Metadata } from "next";
-import { LegalPage } from "@/components/legal-page";
-
-export const metadata: Metadata = { title: "튜터 검증 안내" };
+import { redirect } from "next/navigation";
 
 export default function TutorVerificationPage() {
-  return <LegalPage title="튜터 검증 안내"><h2>검증 절차</h2><ol><li>튜터가 기본 정보, 학력·경력, 자기소개와 증명서를 제출합니다.</li><li>관리자가 제출 정보와 증명서의 일치 여부를 확인합니다.</li><li>확인이 완료되면 승인 또는 반려 결과를 계정 상태에 반영합니다.</li></ol><h2>제출 가능한 서류</h2><p>재학증명서 또는 졸업증명서를 PDF, JPG, JPEG, PNG 형식으로 제출할 수 있습니다. 파일 크기는 10MB 이하여야 합니다.</p><h2>반드시 가려야 하는 정보</h2><p><strong>주민등록번호 전체, 상세 주소, 가족 정보 등 학력 확인에 필요하지 않은 개인정보는 반드시 가리고 업로드해 주세요.</strong> 회사는 주민등록번호를 수집하지 않습니다.</p><h2>보관과 접근</h2><p>증명서는 공개되지 않는 별도 저장소에 보관됩니다. 관리자만 심사를 위해 60초 동안 유효한 서명 링크로 열람할 수 있고, 일반 회원이나 다른 튜터는 접근할 수 없습니다.</p><h2>삭제 정책</h2><p>심사 완료 후 [30일] 이내 삭제를 원칙으로 합니다. 법적 분쟁 또는 부정 지원 조사 등 별도의 보관 사유가 있으면 해당 사유가 종료될 때까지 분리해 보관할 수 있습니다.</p><h2>검증의 범위</h2><p>승인은 제출 서류가 지원 정보와 일치함을 확인한 결과이며, 특정 수업 성과나 인격을 보증하는 것은 아닙니다. 허위 또는 변조 서류가 확인되면 승인과 계정 이용이 취소될 수 있습니다.</p></LegalPage>;
+  redirect("/legal/privacy");
 }

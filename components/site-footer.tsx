@@ -13,7 +13,6 @@ export function SiteFooter() {
         <nav className="mt-4 grid gap-3 text-sm text-slate-500">
           <Link href="/legal/terms">이용약관</Link>
           <Link href="/legal/privacy">개인정보처리방침</Link>
-          <Link href="/legal/tutor-verification">튜터 검증 안내</Link>
           <Link href="/support">고객센터</Link>
         </nav>
       </div>

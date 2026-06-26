@@ -15,7 +15,7 @@ export default async function HomePage() {
           <h1 className="mt-6 text-[34px] font-black leading-[1.2] sm:text-5xl lg:text-[62px]">좋은 선생님과 만나는<br /><span className="text-blue-600">가장 믿음직한 방법</span></h1>
           <p className="mt-6 max-w-xl text-base leading-8 text-slate-600 sm:text-lg">수업 선택부터 상담까지, 클래스링크가 꼼꼼하게 연결합니다. 학생의 목표에 집중한 1:1 학습 설계를 만나보세요.</p>
           <div className="mt-8 flex flex-wrap gap-3"><LinkButton href="/courses" size="lg">수업 둘러보기<ArrowRight className="ml-2 size-4" /></LinkButton><LinkButton href="/signup/student" variant="outline" size="lg">무료로 시작하기</LinkButton></div>
-          <div className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-500"><span className="flex items-center gap-1.5"><ShieldCheck className="size-4 text-blue-600" />신원·학력 서류 확인</span><span className="flex items-center gap-1.5"><MessageCircle className="size-4 text-blue-600" />관리자 직접 상담</span></div>
+          <div className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-500"><span className="flex items-center gap-1.5"><ShieldCheck className="size-4 text-blue-600" />안전한 서비스 이용</span><span className="flex items-center gap-1.5"><MessageCircle className="size-4 text-blue-600" />관리자 직접 상담</span></div>
         </div>
         <div className="relative mx-auto w-full max-w-lg">
           <div className="absolute -left-8 top-20 size-32 rounded-full bg-blue-200/50 blur-3xl" />
@@ -36,7 +36,7 @@ export default async function HomePage() {
     <section id="trust" className="container-page py-20">
       <div className="text-center"><p className="text-sm font-bold text-blue-600">WHY CLASSLINK</p><h2 className="mt-3 text-3xl font-black sm:text-4xl">배움에만 집중할 수 있도록</h2><p className="mx-auto mt-4 max-w-2xl text-slate-500">선생님 검증부터 상담과 학습 연결까지, 중요한 과정은 클래스링크가 함께합니다.</p></div>
       <div className="mt-12 grid gap-5 md:grid-cols-3">
-        {[{ icon: ShieldCheck, title: "꼼꼼한 튜터 검증", text: "학력 증빙과 기본 정보를 관리자가 직접 확인하고 승인합니다." }, { icon: HeartHandshake, title: "목표 중심의 매칭", text: "학생의 현재 수준과 목표를 듣고 알맞은 수업을 함께 찾아갑니다." }, { icon: MessageCircle, title: "안전한 1:1 상담", text: "개인 연락처 노출 없이 플랫폼 안에서 관리자에게 편하게 문의하세요." }].map(({ icon: Icon, title, text }) => <div key={title} className="rounded-2xl border bg-white p-7 shadow-soft"><div className="grid size-12 place-items-center rounded-2xl bg-blue-50 text-blue-700"><Icon /></div><h3 className="mt-5 text-xl font-extrabold">{title}</h3><p className="mt-2 text-sm leading-6 text-slate-500">{text}</p></div>)}
+        {[{ icon: BookOpenCheck, title: "상담 중심의 수업 안내", text: "학생의 목표와 상황을 확인해 필요한 수업 정보를 차분하게 안내합니다." }, { icon: HeartHandshake, title: "목표 중심의 매칭", text: "학생의 현재 수준과 목표를 듣고 알맞은 수업을 함께 찾아갑니다." }, { icon: MessageCircle, title: "안전한 1:1 상담", text: "개인 연락처 노출 없이 플랫폼 안에서 관리자에게 편하게 문의하세요." }].map(({ icon: Icon, title, text }) => <div key={title} className="rounded-2xl border bg-white p-7 shadow-soft"><div className="grid size-12 place-items-center rounded-2xl bg-blue-50 text-blue-700"><Icon /></div><h3 className="mt-5 text-xl font-extrabold">{title}</h3><p className="mt-2 text-sm leading-6 text-slate-500">{text}</p></div>)}
       </div>
     </section>
 
