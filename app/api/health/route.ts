@@ -9,7 +9,7 @@ export async function GET() {
 
   if (!isSupabaseConfigured) {
     return NextResponse.json(
-      { ok: true, service: "classlink", mode: "demo", database: "not-configured", checkedAt },
+      { ok: true, service: "classmoa", mode: "demo", database: "not-configured", checkedAt },
       { headers: { "Cache-Control": "no-store" } }
     );
   }
@@ -26,7 +26,7 @@ export async function GET() {
   }
 
   return NextResponse.json(
-    { ok: !error, service: "classlink", mode: "production", database: error ? "unreachable" : "reachable", checkedAt },
+    { ok: !error, service: "classmoa", mode: "production", database: error ? "unreachable" : "reachable", checkedAt },
     { status: error ? 503 : 200, headers: { "Cache-Control": "no-store" } }
   );
 }

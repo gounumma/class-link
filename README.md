@@ -1,4 +1,4 @@
-# 클래스링크 MVP
+# 클래스모아 MVP
 
 학생·튜터·관리자를 위한 한국어 과외 수업 문의 플랫폼입니다. Next.js 15 App Router, TypeScript, Tailwind CSS, Supabase Auth/PostgreSQL/Storage로 구성했습니다.
 

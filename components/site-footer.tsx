@@ -5,7 +5,7 @@ export function SiteFooter() {
   return <footer className="border-t border-slate-200 bg-slate-50">
     <div className="container-page grid gap-10 py-12 md:grid-cols-[1.2fr_1fr_1fr]">
       <div>
-        <div className="flex items-center gap-2 font-extrabold text-navy-950"><GraduationCap className="size-5" />클래스링크</div>
+        <div className="flex items-center gap-2 font-extrabold text-navy-950"><GraduationCap className="size-5" />클래스모아</div>
         <p className="mt-4 max-w-sm text-sm leading-6 text-slate-500">학생의 배움과 좋은 선생님의 전문성이 안전하게 만나는 맞춤 과외 플랫폼입니다.</p>
       </div>
       <div>
@@ -25,6 +25,6 @@ export function SiteFooter() {
         </div>
       </div>
     </div>
-    <div className="border-t border-slate-200 py-5"><div className="container-page text-xs leading-5 text-slate-400">상호명 루트에듀 · 대표 임철희 · 사업자등록번호 130-79-00592 · 사업장 주소 문의 시 안내<br />© 2026 클래스링크. All rights reserved.</div></div>
+    <div className="border-t border-slate-200 py-5"><div className="container-page text-xs leading-5 text-slate-400">상호명 루트에듀 · 대표 임철희 · 사업자등록번호 130-79-00592 · 사업장 주소 문의 시 안내<br />© 2026 클래스모아. All rights reserved.</div></div>
   </footer>;
 }

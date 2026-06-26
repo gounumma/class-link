@@ -7,14 +7,14 @@ export async function SiteHeader() {
   const profile = await getCurrentProfile();
   return <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/90 backdrop-blur-xl">
     <div className="container-page flex h-18 items-center justify-between gap-4">
-      <Link href="/" className="focus-ring flex items-center gap-2 rounded-lg" aria-label="클래스링크 홈">
+      <Link href="/" className="focus-ring flex items-center gap-2 rounded-lg" aria-label="클래스모아 홈">
         <span className="grid size-9 place-items-center rounded-xl bg-navy-900 text-white"><GraduationCap className="size-5" /></span>
-        <span className="text-lg font-extrabold tracking-tight text-navy-950">클래스링크</span>
+        <span className="text-lg font-extrabold tracking-tight text-navy-950">클래스모아</span>
       </Link>
       <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex" aria-label="주 메뉴">
         <Link className="hover:text-blue-700" href="/courses">수업 찾기</Link>
         <Link className="hover:text-blue-700" href="/#process">수업 진행 방식</Link>
-        <Link className="hover:text-blue-700" href="/#trust">클래스링크 소개</Link>
+        <Link className="hover:text-blue-700" href="/#trust">클래스모아 소개</Link>
       </nav>
       <div className="hidden items-center gap-2 md:flex">
         {profile ? <>

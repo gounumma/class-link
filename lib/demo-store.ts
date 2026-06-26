@@ -4,7 +4,7 @@ import { demoCourses } from "@/lib/demo-data";
 import type { Course } from "@/lib/types";
 
 type DemoCourseInput = Omit<Course, "id" | "created_at" | "updated_at">;
-const demoGlobal = globalThis as typeof globalThis & { classlinkDemoCourses?: Course[] };
+const demoGlobal = globalThis as typeof globalThis & { classmoaDemoCourses?: Course[] };
 const demoStorePath = path.join(process.cwd(), ".demo", "courses.json");
 
 function readCourses() {
@@ -21,12 +21,12 @@ function readCourses() {
 function writeCourses(courses: Course[]) {
   fs.mkdirSync(path.dirname(demoStorePath), { recursive: true });
   fs.writeFileSync(demoStorePath, JSON.stringify(courses, null, 2), "utf8");
-  demoGlobal.classlinkDemoCourses = courses;
+  demoGlobal.classmoaDemoCourses = courses;
 }
 
 function store() {
-  demoGlobal.classlinkDemoCourses = readCourses();
-  return demoGlobal.classlinkDemoCourses;
+  demoGlobal.classmoaDemoCourses = readCourses();
+  return demoGlobal.classmoaDemoCourses;
 }
 
 export function getDemoCourses() {

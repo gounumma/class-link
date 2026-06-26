@@ -46,7 +46,7 @@ export const demoCourses: Course[] = [
 ];
 
 export const demoProfiles: Profile[] = [
-  { id: "admin-demo", email: "admin@classlink.kr", name: "관리자", phone: "02-1234-5678", role: "ADMIN", tutor_status: null, created_at: "2026-06-01T09:00:00Z" },
+  { id: "admin-demo", email: "admin@classmoa.kr", name: "관리자", phone: "02-1234-5678", role: "ADMIN", tutor_status: null, created_at: "2026-06-01T09:00:00Z" },
   { id: "55555555-5555-4555-8555-555555555555", email: "teacher@example.com", name: "김서윤", phone: "010-1234-5678", role: "TUTOR", tutor_status: "PENDING", created_at: "2026-06-20T09:00:00Z" },
   { id: "student-demo", email: "student@example.com", name: "박민준", phone: "010-2222-3333", role: "STUDENT", tutor_status: null, created_at: "2026-06-21T09:00:00Z" }
 ];
