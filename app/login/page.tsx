@@ -3,6 +3,7 @@ import { AuthShell } from "@/components/auth-shell";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
 import { Notice } from "@/components/ui/notice";
+import { PasswordInput } from "@/components/ui/password-input";
 
 const successMessages: Record<string, string> = {
   "check-email": "가입 확인 메일을 보냈어요. 이메일 인증 후 로그인해 주세요.",
@@ -19,7 +20,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
     <form action="/auth/password" method="post" className="space-y-5">
       <input type="hidden" name="next" value={params.next?.startsWith("/") && !params.next.startsWith("//") ? params.next : "/dashboard"} />
       <Field label="이메일" required><Input type="email" name="email" autoComplete="email" required placeholder="name@example.com" /></Field>
-      <Field label="비밀번호" required><Input type="password" name="password" autoComplete="current-password" required placeholder="비밀번호를 입력해 주세요" /></Field>
+      <Field label="비밀번호" required><PasswordInput name="password" autoComplete="current-password" required placeholder="비밀번호를 입력해 주세요" /></Field>
       <Button type="submit" className="w-full">로그인</Button>
     </form>
     <div className="mt-7 border-t pt-6 text-center text-sm text-slate-500">아직 회원이 아니신가요? <Link href="/signup/student" className="font-bold text-blue-700">학생으로 가입</Link></div>
