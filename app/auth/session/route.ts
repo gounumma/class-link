@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing session" }, { status: 400 });
   }
 
-  const response = NextResponse.json({ ok: true });
+  const responseCookies: { name: string; value: string; options: CookieOptions }[] = [];
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -19,12 +19,7 @@ export async function POST(request: NextRequest) {
       cookies: {
         getAll: () => request.cookies.getAll(),
         setAll: (cookiesToSet: { name: string; value: string; options: CookieOptions }[]) => {
-          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, {
-            ...options,
-            path: options.path ?? "/",
-            sameSite: options.sameSite ?? "lax",
-            secure: process.env.NODE_ENV === "production"
-          }));
+          responseCookies.push(...cookiesToSet);
         }
       }
     }
@@ -39,5 +34,12 @@ export async function POST(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
   const adminToken = user?.email ? createAdminSessionToken(user.email) : null;
-  return NextResponse.json({ ok: true, adminToken, adminSessionMaxAge }, { headers: response.headers });
+  const response = NextResponse.json({ ok: true, adminToken, adminSessionMaxAge });
+  responseCookies.forEach(({ name, value, options }) => response.cookies.set(name, value, {
+    ...options,
+    path: options.path ?? "/",
+    sameSite: options.sameSite ?? "lax",
+    secure: process.env.NODE_ENV === "production"
+  }));
+  return response;
 }

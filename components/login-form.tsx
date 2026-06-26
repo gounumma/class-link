@@ -11,6 +11,17 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
+  function getLoginErrorMessage(message?: string) {
+    const normalized = message?.toLowerCase() ?? "";
+    if (normalized.includes("email not confirmed") || normalized.includes("not confirmed")) {
+      return "이메일 인증이 아직 완료되지 않았어요. 받은 메일의 인증 링크를 먼저 눌러 주세요.";
+    }
+    if (normalized.includes("invalid login credentials")) {
+      return "이메일 또는 비밀번호를 확인해 주세요.";
+    }
+    return "로그인하지 못했습니다. 잠시 후 다시 시도해 주세요.";
+  }
+
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
@@ -28,7 +39,7 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
 
     if (loginError || !data.session) {
       setPending(false);
-      setError("이메일 또는 비밀번호를 확인해 주세요.");
+      setError(getLoginErrorMessage(loginError?.message));
       return;
     }
 
@@ -43,8 +54,9 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
     });
 
     if (!sessionResponse.ok) {
+      const payload = await sessionResponse.json().catch(() => null) as { error?: string } | null;
       setPending(false);
-      setError("로그인 세션을 저장하지 못했습니다. 다시 시도해 주세요.");
+      setError(payload?.error ?? "로그인 세션을 저장하지 못했습니다. 다시 시도해 주세요.");
       return;
     }
 

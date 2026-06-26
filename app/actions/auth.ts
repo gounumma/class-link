@@ -1,9 +1,17 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { loginSchema, studentSignupSchema } from "@/lib/validation";
+
+async function getSiteUrl() {
+  const headerStore = await headers();
+  const origin = headerStore.get("origin");
+  if (origin?.startsWith("http://") || origin?.startsWith("https://")) return origin;
+  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+}
 
 function fail(path: string, message: string): never {
   redirect(`${path}?error=${encodeURIComponent(message)}`);
@@ -36,7 +44,7 @@ export async function studentSignupAction(formData: FormData) {
   if (!isSupabaseConfigured) redirect("/login?success=student-demo");
 
   const supabase = await createClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = await getSiteUrl();
   const { data, error } = await supabase!.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
