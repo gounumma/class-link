@@ -14,7 +14,7 @@ export default async function HomePage() {
           <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-3 py-1.5 text-xs font-bold text-blue-700 shadow-sm"><Sparkles className="size-3.5" />아이에게 꼭 맞는 배움의 시작</div>
           <h1 className="mt-6 text-[34px] font-black leading-[1.2] sm:text-5xl lg:text-[62px]">좋은 선생님과 만나는<br /><span className="text-blue-600">가장 믿음직한 방법</span></h1>
           <p className="mt-6 max-w-xl text-base leading-8 text-slate-600 sm:text-lg">수업 선택부터 상담까지, 클래스링크가 꼼꼼하게 연결합니다. 학생의 목표에 집중한 1:1 학습 설계를 만나보세요.</p>
-          <div className="mt-8 flex flex-wrap gap-3"><LinkButton href="/courses" size="lg">수업 둘러보기<ArrowRight className="ml-2 size-4" /></LinkButton><LinkButton href="/signup/tutor" variant="outline" size="lg">튜터로 지원하기</LinkButton></div>
+          <div className="mt-8 flex flex-wrap gap-3"><LinkButton href="/courses" size="lg">수업 둘러보기<ArrowRight className="ml-2 size-4" /></LinkButton><LinkButton href="/signup/student" variant="outline" size="lg">무료로 시작하기</LinkButton></div>
           <div className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-500"><span className="flex items-center gap-1.5"><ShieldCheck className="size-4 text-blue-600" />신원·학력 서류 확인</span><span className="flex items-center gap-1.5"><MessageCircle className="size-4 text-blue-600" />관리자 직접 상담</span></div>
         </div>
         <div className="relative mx-auto w-full max-w-lg">

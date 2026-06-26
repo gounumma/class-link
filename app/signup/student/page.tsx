@@ -17,6 +17,5 @@ export default async function StudentSignupPage({ searchParams }: { searchParams
       <ConsentFields />
       <Button type="submit" className="w-full">학생으로 가입하기</Button>
     </form>
-    <p className="mt-6 text-center text-sm text-slate-500">튜터로 활동하고 싶으신가요? <Link href="/signup/tutor" className="font-bold text-blue-700">튜터 지원하기</Link></p>
   </AuthShell>;
 }

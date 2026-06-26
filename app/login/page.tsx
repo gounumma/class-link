@@ -23,6 +23,6 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <Field label="비밀번호" required><Input type="password" name="password" autoComplete="current-password" required placeholder="비밀번호를 입력해 주세요" /></Field>
       <Button type="submit" className="w-full">로그인</Button>
     </form>
-    <div className="mt-7 border-t pt-6 text-center text-sm text-slate-500">아직 회원이 아니신가요? <Link href="/signup/student" className="font-bold text-blue-700">학생으로 가입</Link><span className="mx-2">·</span><Link href="/signup/tutor" className="font-bold text-blue-700">튜터로 지원</Link></div>
+    <div className="mt-7 border-t pt-6 text-center text-sm text-slate-500">아직 회원이 아니신가요? <Link href="/signup/student" className="font-bold text-blue-700">학생으로 가입</Link></div>
   </AuthShell>;
 }
