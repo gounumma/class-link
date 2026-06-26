@@ -1,5 +1,6 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { demoMessages, demoThreads, demoTutors } from "@/lib/demo-data";
 import { getDemoCourses } from "@/lib/demo-store";
@@ -38,7 +39,7 @@ export async function getFeaturedCourses(): Promise<Course[]> {
 export async function getCourse(id: string, includeDrafts = false): Promise<Course | null> {
   noStore();
   if (!isSupabaseConfigured) return getDemoCourses().find((c) => c.id === id && (includeDrafts || c.is_published)) ?? null;
-  const supabase = await createClient();
+  const supabase = createAdminClient() ?? await createClient();
   if (!supabase) return null;
   let query = supabase.from("courses").select("*").eq("id", id);
   if (!includeDrafts) query = query.eq("is_published", true);
@@ -49,7 +50,7 @@ export async function getCourse(id: string, includeDrafts = false): Promise<Cour
 export async function getTutorApplications(): Promise<TutorApplication[]> {
   noStore();
   if (!isSupabaseConfigured) return demoTutors;
-  const supabase = await createClient();
+  const supabase = createAdminClient() ?? await createClient();
   const { data } = await supabase!.from("tutor_applications").select("*, users_profile(*)").order("created_at", { ascending: false });
   return (data ?? []) as unknown as TutorApplication[];
 }
@@ -57,7 +58,7 @@ export async function getTutorApplications(): Promise<TutorApplication[]> {
 export async function getTutorApplication(id: string): Promise<TutorApplication | null> {
   noStore();
   if (!isSupabaseConfigured) return demoTutors.find((item) => item.id === id) ?? null;
-  const supabase = await createClient();
+  const supabase = createAdminClient() ?? await createClient();
   const { data } = await supabase!.from("tutor_applications").select("*, users_profile(*)").eq("id", id).maybeSingle();
   return data as unknown as TutorApplication | null;
 }
@@ -65,7 +66,7 @@ export async function getTutorApplication(id: string): Promise<TutorApplication 
 export async function getThreads(userId?: string): Promise<ChatThread[]> {
   noStore();
   if (!isSupabaseConfigured) return userId ? demoThreads.filter((t) => t.user_id === userId) : demoThreads;
-  const supabase = await createClient();
+  const supabase = createAdminClient() ?? await createClient();
   let query = supabase!.from("chat_threads").select("*, courses(id,title), users_profile(id,name,email,role)").order("created_at", { ascending: false });
   if (userId) query = query.eq("user_id", userId);
   const { data } = await query;

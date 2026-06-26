@@ -1,5 +1,7 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+import { ADMIN_SESSION_COOKIE, verifyAdminSessionToken } from "@/lib/admin-session";
 import type { Profile } from "@/lib/types";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -10,9 +12,14 @@ export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
   const supabase = await createClient();
   if (!supabase) return null;
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
+  if (!user) {
+    const cookieStore = await cookies();
+    return verifyAdminSessionToken(cookieStore.get(ADMIN_SESSION_COOKIE)?.value);
+  }
   const { data } = await supabase.from("users_profile").select("*").eq("id", user.id).single();
-  return data as Profile | null;
+  if (data) return data as Profile;
+  const cookieStore = await cookies();
+  return verifyAdminSessionToken(cookieStore.get(ADMIN_SESSION_COOKIE)?.value);
 });
 
 export async function requireUser() {

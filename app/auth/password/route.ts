@@ -9,7 +9,12 @@ function safeNext(value: FormDataEntryValue | null) {
 
 function redirectWithCookies(request: NextRequest, path: string, cookiesToSet: { name: string; value: string; options: CookieOptions }[] = []) {
   const response = NextResponse.redirect(new URL(path, request.url), { status: 303 });
-  cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+  cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, {
+    ...options,
+    path: options.path ?? "/",
+    sameSite: options.sameSite ?? "lax",
+    secure: process.env.NODE_ENV === "production"
+  }));
   return response;
 }
 
