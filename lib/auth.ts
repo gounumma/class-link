@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { ADMIN_SESSION_COOKIE, verifyAdminSessionToken } from "@/lib/admin-session";
 import type { Profile } from "@/lib/types";
+import { ensureProfileForUser, profileFromUser } from "@/lib/profile";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { demoProfiles } from "@/lib/demo-data";
@@ -18,6 +19,10 @@ export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
   }
   const { data } = await supabase.from("users_profile").select("*").eq("id", user.id).single();
   if (data) return data as Profile;
+  const ensuredProfile = await ensureProfileForUser(user);
+  if (ensuredProfile) return ensuredProfile;
+  const fallbackProfile = profileFromUser(user);
+  if (fallbackProfile) return fallbackProfile;
   const cookieStore = await cookies();
   return verifyAdminSessionToken(cookieStore.get(ADMIN_SESSION_COOKIE)?.value);
 });

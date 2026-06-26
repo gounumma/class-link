@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { ADMIN_SESSION_COOKIE, adminSessionMaxAge, createAdminSessionToken } from "@/lib/admin-session";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { loginSchema } from "@/lib/validation";
 
@@ -43,10 +44,31 @@ export async function POST(request: NextRequest) {
     }
   );
 
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) {
-    return redirectWithCookies(request, `/login?next=${encodeURIComponent(nextPath)}&error=${encodeURIComponent("이메일 또는 비밀번호를 확인해 주세요.")}`);
+    const normalized = error.message.toLowerCase();
+    const message = normalized.includes("email not confirmed") || normalized.includes("not confirmed")
+      ? "이메일 인증이 아직 완료되지 않았어요. 받은 메일의 인증 링크를 먼저 눌러 주세요."
+      : "이메일 또는 비밀번호가 맞지 않거나, 이메일 인증이 아직 완료되지 않았을 수 있어요. 인증 메일을 못 받으셨다면 아래에서 다시 받아 주세요.";
+    return redirectWithCookies(request, `/login?next=${encodeURIComponent(nextPath)}&error=${encodeURIComponent(message)}`);
   }
 
-  return redirectWithCookies(request, nextPath, cookiesToSet);
+  const response = redirectWithCookies(request, nextPath, cookiesToSet);
+  const adminToken = data.user?.email ? createAdminSessionToken(data.user.email) : null;
+  if (adminToken) {
+    response.cookies.set(ADMIN_SESSION_COOKIE, adminToken, {
+      path: "/",
+      maxAge: adminSessionMaxAge,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production"
+    });
+  } else {
+    response.cookies.set(ADMIN_SESSION_COOKIE, "", {
+      path: "/",
+      maxAge: 0,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production"
+    });
+  }
+  return response;
 }

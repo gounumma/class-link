@@ -7,6 +7,17 @@ import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { chatSchema } from "@/lib/validation";
 
+function chatErrorMessage(message?: string) {
+  const normalized = message?.toLowerCase() ?? "";
+  if (normalized.includes("permission denied") || normalized.includes("row-level security")) {
+    return "상담 메시지를 저장할 권한이 아직 설정되지 않았어요. 관리자에게 Supabase 권한 설정을 확인해 주세요.";
+  }
+  if (normalized.includes("violates foreign key")) {
+    return "회원 프로필 정보가 아직 연결되지 않았어요. 잠시 후 다시 시도해 주세요.";
+  }
+  return "상담 메시지를 저장하지 못했어요. 잠시 후 다시 시도해 주세요.";
+}
+
 export async function startChatAction(courseId: string, formData: FormData) {
   const profile = await requireUser();
   if (profile.role === "TUTOR" && profile.tutor_status !== "APPROVED") redirect("/dashboard?pending=1");
@@ -15,13 +26,17 @@ export async function startChatAction(courseId: string, formData: FormData) {
   if (!isSupabaseConfigured) redirect("/messages?thread=thread-demo");
 
   const supabase = await createClient();
-  let { data: thread } = await supabase!.from("chat_threads").select("id").eq("user_id", profile.id).eq("course_id", courseId).eq("status", "OPEN").maybeSingle();
+  const { data: existingThread, error: threadLookupError } = await supabase!.from("chat_threads").select("id").eq("user_id", profile.id).eq("course_id", courseId).eq("status", "OPEN").maybeSingle();
+  let thread = existingThread;
+  if (threadLookupError) redirect(`/courses/${courseId}?error=${encodeURIComponent(chatErrorMessage(threadLookupError.message))}`);
   if (!thread) {
     const created = await supabase!.from("chat_threads").insert({ user_id: profile.id, course_id: courseId }).select("id").single();
+    if (created.error) redirect(`/courses/${courseId}?error=${encodeURIComponent(chatErrorMessage(created.error.message))}`);
     thread = created.data;
   }
-  if (!thread) redirect(`/courses/${courseId}?error=chat`);
-  await supabase!.from("chat_messages").insert({ thread_id: thread.id, sender_id: profile.id, body: parsed.data.body });
+  if (!thread) redirect(`/courses/${courseId}?error=${encodeURIComponent(chatErrorMessage())}`);
+  const messageResult = await supabase!.from("chat_messages").insert({ thread_id: thread.id, sender_id: profile.id, body: parsed.data.body });
+  if (messageResult.error) redirect(`/courses/${courseId}?error=${encodeURIComponent(chatErrorMessage(messageResult.error.message))}`);
   redirect(`/messages?thread=${thread.id}`);
 }
 

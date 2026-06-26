@@ -1,7 +1,8 @@
 "use server";
 
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { ADMIN_SESSION_COOKIE, adminSessionMaxAge, createAdminSessionToken } from "@/lib/admin-session";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { loginSchema, studentSignupSchema } from "@/lib/validation";
@@ -15,6 +16,17 @@ async function getSiteUrl() {
 
 function fail(path: string, message: string): never {
   redirect(`${path}?error=${encodeURIComponent(message)}`);
+}
+
+function getLoginErrorMessage(message?: string) {
+  const normalized = message?.toLowerCase() ?? "";
+  if (normalized.includes("email not confirmed") || normalized.includes("not confirmed")) {
+    return "이메일 인증이 아직 완료되지 않았어요. 받은 메일의 인증 링크를 먼저 눌러 주세요.";
+  }
+  if (normalized.includes("invalid login credentials")) {
+    return "이메일 또는 비밀번호가 맞지 않거나, 이메일 인증이 아직 완료되지 않았을 수 있어요. 인증 메일을 못 받으셨다면 아래에서 다시 받아 주세요.";
+  }
+  return "로그인하지 못했습니다. 잠시 후 다시 시도해 주세요.";
 }
 
 function isAlreadyRegisteredError(message?: string) {
@@ -32,14 +44,29 @@ export async function loginAction(formData: FormData) {
   if (!isSupabaseConfigured) redirect(`${nextPath}${nextPath.includes("?") ? "&" : "?"}demo=1`);
 
   const supabase = await createClient();
-  const { error } = await supabase!.auth.signInWithPassword(parsed.data);
-  if (error) fail("/login", "이메일 또는 비밀번호를 확인해 주세요.");
+  const { data, error } = await supabase!.auth.signInWithPassword(parsed.data);
+  if (error) fail("/login", getLoginErrorMessage(error.message));
+
+  const cookieStore = await cookies();
+  const adminToken = data.user?.email ? createAdminSessionToken(data.user.email) : null;
+  if (adminToken) {
+    cookieStore.set(ADMIN_SESSION_COOKIE, adminToken, {
+      path: "/",
+      maxAge: adminSessionMaxAge,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production"
+    });
+  } else {
+    cookieStore.delete(ADMIN_SESSION_COOKIE);
+  }
   redirect(nextPath);
 }
 
 export async function logoutAction() {
   const supabase = await createClient();
   if (supabase) await supabase.auth.signOut();
+  const cookieStore = await cookies();
+  cookieStore.delete(ADMIN_SESSION_COOKIE);
   redirect("/");
 }
 
