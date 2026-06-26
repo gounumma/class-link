@@ -4,10 +4,9 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { deleteDemoCourse, saveDemoCourse, setDemoCoursePublished } from "@/lib/demo-store";
-import { courseSchema, reviewTutorSchema } from "@/lib/validation";
+import { courseSchema } from "@/lib/validation";
 
 export async function saveCourseAction(courseId: string | null, formData: FormData) {
   await requireAdmin();
@@ -66,36 +65,4 @@ export async function toggleCoursePublishedAction(courseId: string, nextPublishe
   revalidatePath(`/courses/${courseId}`);
   revalidatePath("/admin/courses");
   redirect(`/admin/courses?success=${nextPublished ? "published" : "unpublished"}`);
-}
-
-export async function reviewTutorAction(formData: FormData) {
-  const adminProfile = await requireAdmin();
-  const parsed = reviewTutorSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) redirect(`/admin/tutors?error=${encodeURIComponent(parsed.error.issues[0].message)}`);
-  if (isSupabaseConfigured) {
-    const admin = createAdminClient();
-    if (!admin) redirect("/admin/tutors?error=server-config");
-    const { data: application } = await admin.from("tutor_applications").select("user_id").eq("id", parsed.data.application_id).single();
-    if (!application) redirect("/admin/tutors?error=not-found");
-    await admin.from("tutor_applications").update({
-      status: parsed.data.decision,
-      rejection_reason: parsed.data.decision === "REJECTED" ? parsed.data.rejection_reason : null,
-      reviewed_by: adminProfile.id,
-      reviewed_at: new Date().toISOString()
-    }).eq("id", parsed.data.application_id);
-    await admin.from("users_profile").update({ tutor_status: parsed.data.decision }).eq("id", application.user_id);
-  }
-  revalidatePath("/admin/tutors");
-  redirect("/admin/tutors?success=reviewed");
-}
-
-export async function getCertificateUrlAction(applicationId: string) {
-  await requireAdmin();
-  if (!isSupabaseConfigured) return null;
-  const admin = createAdminClient();
-  if (!admin) return null;
-  const { data } = await admin.from("tutor_applications").select("certificate_file_path").eq("id", applicationId).single();
-  if (!data?.certificate_file_path) return null;
-  const { data: signed } = await admin.storage.from("tutor-certificates").createSignedUrl(data.certificate_file_path, 60);
-  return signed?.signedUrl ?? null;
 }

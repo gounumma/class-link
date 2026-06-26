@@ -1,9 +1,9 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { demoMessages, demoThreads, demoTutors } from "@/lib/demo-data";
+import { demoMessages, demoThreads } from "@/lib/demo-data";
 import { getDemoCourses } from "@/lib/demo-store";
-import type { ChatMessage, ChatThread, Course, TutorApplication } from "@/lib/types";
+import type { ChatMessage, ChatThread, Course } from "@/lib/types";
 
 export async function getCourses(includeDrafts = false): Promise<Course[]> {
   noStore();
@@ -43,22 +43,6 @@ export async function getCourse(id: string, includeDrafts = false): Promise<Cour
   if (!includeDrafts) query = query.eq("is_published", true);
   const { data } = await query.maybeSingle();
   return data as Course | null;
-}
-
-export async function getTutorApplications(): Promise<TutorApplication[]> {
-  noStore();
-  if (!isSupabaseConfigured) return demoTutors;
-  const supabase = await createClient();
-  const { data } = await supabase!.from("tutor_applications").select("*, users_profile(*)").order("created_at", { ascending: false });
-  return (data ?? []) as unknown as TutorApplication[];
-}
-
-export async function getTutorApplication(id: string): Promise<TutorApplication | null> {
-  noStore();
-  if (!isSupabaseConfigured) return demoTutors.find((item) => item.id === id) ?? null;
-  const supabase = await createClient();
-  const { data } = await supabase!.from("tutor_applications").select("*, users_profile(*)").eq("id", id).maybeSingle();
-  return data as unknown as TutorApplication | null;
 }
 
 export async function getThreads(userId?: string): Promise<ChatThread[]> {
