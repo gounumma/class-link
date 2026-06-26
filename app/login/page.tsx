@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { loginAction } from "@/app/actions/auth";
 import { AuthShell } from "@/components/auth-shell";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
@@ -17,7 +16,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return <AuthShell eyebrow="Welcome back" title="다시 만나 반가워요" description="가입한 이메일과 비밀번호로 로그인해 주세요.">
     {params.error && <div className="mb-5"><Notice tone="error">{params.error}</Notice></div>}
     {params.success && <div className="mb-5"><Notice tone="success">{successMessages[params.success] ?? "처리되었습니다."}</Notice></div>}
-    <form action={loginAction} className="space-y-5">
+    <form action="/auth/password" method="post" className="space-y-5">
       <input type="hidden" name="next" value={params.next?.startsWith("/") && !params.next.startsWith("//") ? params.next : "/dashboard"} />
       <Field label="이메일" required><Input type="email" name="email" autoComplete="email" required placeholder="name@example.com" /></Field>
       <Field label="비밀번호" required><Input type="password" name="password" autoComplete="current-password" required placeholder="비밀번호를 입력해 주세요" /></Field>
