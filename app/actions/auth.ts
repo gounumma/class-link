@@ -53,6 +53,6 @@ export async function studentSignupAction(formData: FormData) {
   redirect("/login?success=check-email");
 }
 
-export async function tutorSignupAction(formData: FormData) {
+export async function tutorSignupAction() {
   redirect("/signup/student");
 }

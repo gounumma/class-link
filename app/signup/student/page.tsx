@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { studentSignupAction } from "@/app/actions/auth";
 import { AuthShell } from "@/components/auth-shell";
 import { ConsentFields } from "@/components/consent-fields";
