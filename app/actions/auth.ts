@@ -17,6 +17,11 @@ function fail(path: string, message: string): never {
   redirect(`${path}?error=${encodeURIComponent(message)}`);
 }
 
+function isAlreadyRegisteredError(message?: string) {
+  const normalized = message?.toLowerCase() ?? "";
+  return normalized.includes("already registered") || normalized.includes("already exists") || normalized.includes("user already");
+}
+
 export async function loginAction(formData: FormData) {
   const parsed = loginSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) fail("/login", parsed.error.issues[0].message);
@@ -57,6 +62,22 @@ export async function studentSignupAction(formData: FormData) {
       marketing_agreed: parsed.data.marketing === "on"
     } }
   });
+  const existingAccount = Boolean(data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0);
+  if ((error && isAlreadyRegisteredError(error.message)) || existingAccount) {
+    const { error: resendError } = await supabase!.auth.resend({
+      type: "signup",
+      email: parsed.data.email,
+      options: { emailRedirectTo: `${siteUrl}/auth/callback?next=/dashboard` }
+    });
+    if (resendError) {
+      const normalized = resendError.message.toLowerCase();
+      if (normalized.includes("rate limit") || normalized.includes("security purposes")) {
+        fail("/login", "인증 메일을 방금 요청했어요. 잠시 후 다시 시도해 주세요.");
+      }
+      fail("/login", "인증 메일을 다시 보내지 못했습니다. 이메일 주소를 확인해 주세요.");
+    }
+    redirect("/login?success=resend-email");
+  }
   if (error || !data.user) fail("/signup/student", error?.message ?? "가입을 완료하지 못했어요.");
   redirect("/login?success=check-email");
 }

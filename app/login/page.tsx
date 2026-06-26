@@ -5,6 +5,7 @@ import { Notice } from "@/components/ui/notice";
 
 const successMessages: Record<string, string> = {
   "check-email": "가입 확인 메일을 보냈어요. 이메일 인증 후 로그인해 주세요.",
+  "resend-email": "인증 메일을 다시 보냈어요. 이메일함을 확인해 주세요.",
   "student-demo": "학생 회원가입 데모가 완료되었습니다. 로그인 버튼을 눌러 계속하세요."
 };
 
