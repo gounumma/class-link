@@ -16,6 +16,14 @@ export async function GET() {
 
   const supabase = await createClient();
   const { error } = await supabase!.from("courses").select("id", { head: true, count: "exact" }).limit(1);
+  if (error) {
+    console.error("Health check database error", {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
+  }
 
   return NextResponse.json(
     { ok: !error, service: "classlink", mode: "production", database: error ? "unreachable" : "reachable", checkedAt },
