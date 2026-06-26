@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin, requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import type { ChatMessage } from "@/lib/types";
 import { chatSchema } from "@/lib/validation";
 
 function chatErrorMessage(message?: string) {
@@ -57,6 +58,53 @@ export async function sendMessageAction(threadId: string, formData: FormData) {
   revalidatePath("/messages");
   revalidatePath("/admin/messages");
   redirect(profile.role === "ADMIN" ? `/admin/messages?thread=${threadId}` : `/messages?thread=${threadId}`);
+}
+
+export async function sendInlineMessageAction(threadId: string, body: string): Promise<{ ok: true; message: ChatMessage } | { ok: false; error: string }> {
+  const profile = await requireUser();
+  const parsed = chatSchema.safeParse({ thread_id: threadId, body });
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
+  if (!isSupabaseConfigured) {
+    return {
+      ok: true,
+      message: {
+        id: `demo-${Date.now()}`,
+        thread_id: threadId,
+        sender_id: profile.id,
+        body: parsed.data.body,
+        created_at: new Date().toISOString(),
+        read_at: null,
+        users_profile: { id: profile.id, name: profile.name, role: profile.role }
+      }
+    };
+  }
+
+  const supabase = await createClient();
+  const { data: thread, error: threadError } = await supabase!.from("chat_threads").select("user_id,status").eq("id", threadId).single();
+  if (threadError || !thread || thread.status !== "OPEN") return { ok: false, error: "종료되었거나 찾을 수 없는 상담입니다." };
+  if (profile.role !== "ADMIN" && thread.user_id !== profile.id) return { ok: false, error: "이 대화에 메시지를 보낼 권한이 없습니다." };
+
+  const { data: latest } = await supabase!.from("chat_messages").select("created_at").eq("sender_id", profile.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+  if (latest && Date.now() - new Date(latest.created_at).getTime() < 2000) {
+    return { ok: false, error: "메시지는 2초에 한 번 보낼 수 있어요." };
+  }
+
+  const { data: message, error } = await supabase!
+    .from("chat_messages")
+    .insert({ thread_id: threadId, sender_id: profile.id, body: parsed.data.body })
+    .select("id,thread_id,sender_id,body,created_at,read_at")
+    .single();
+  if (error || !message) return { ok: false, error: chatErrorMessage(error?.message) };
+
+  revalidatePath("/messages");
+  revalidatePath("/admin/messages");
+  return {
+    ok: true,
+    message: {
+      ...(message as ChatMessage),
+      users_profile: { id: profile.id, name: profile.name, role: profile.role }
+    }
+  };
 }
 
 export async function adminSendMessageAction(threadId: string, formData: FormData) {
